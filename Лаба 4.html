@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корзина</title>
+    <link href="https://e-learning.bmstu.ru/iu6/pluginfile.php/7546/mod_folder/content/0/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .centertext 
+        {
+         text-align: center; 
+        }
+        .right 
+        {
+         text-align: right;
+        }
+    
+        tbody tr:hover 
+        {
+         background: #d3d3d3;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        function addElement(input1,input2) 
+        {
+    if ((Number(input2.innerHTML) != "" || Number(input2.value) != ""))
+    {
+        if (Number(input2.innerHTML) > 0 || Number(input2.value) > 0)
+        {
+        let elem = document.getElementById("tableBody");7
+        elem = elem.firstElementChild;
+        let check = true;
+        while(elem && check) 
+        {
+            if((elem.firstElementChild.innerHTML==input1.innerHTML && elem.firstElementChild.nextElementSibling.nextElementSibling.innerHTML==input2.innerHTML) || (elem.firstElementChild.innerHTML==input1.value && elem.firstElementChild.nextElementSibling.nextElementSibling.innerHTML==input2.value )) 
+            {
+                check = false;
+                elem.firstElementChild.nextElementSibling.innerHTML = Number(elem.firstElementChild.nextElementSibling.innerHTML) + 1;
+                document.getElementById('statusLabel').style.color = 'green';
+                document.getElementById('statusLabel').innerHTML = "Товар успешно добавлен в корзину!";
+                document.getElementById("sumPriceResult").innerHTML = "Общая стоимость : ";
+            }
+            elem = elem.nextElementSibling;
+        }
+        if(check)
+        {
+            let tr = document.createElement("tr");
+            let td1 = document.createElement("td");
+            let td2 = document.createElement("td");
+            let td3 = document.createElement("td");
+            if ((input1.innerHTML == "") && (input2.innerHTML == ""))
+            {
+            td1.innerHTML = input1.value;
+            td2.innerHTML = 1;
+            td3.innerHTML = input2.value;
+            }
+            else
+            {
+            td1.innerHTML = input1.innerHTML;
+            td2.innerHTML = 1;
+            td3.innerHTML = input2.innerHTML;
+            }
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            tr.appendChild(td3);
+            document.getElementById('tableBody').appendChild(tr);
+            document.getElementById('statusLabel').style.color = 'green';
+            document.getElementById('statusLabel').innerHTML = "Товар успешно добавлен в корзину!";
+            document.getElementById("sumPriceResult").innerHTML = "Общая стоимость : ";
+        } 
+     }
+     else
+     {
+      document.getElementById('statusLabel').style.color = 'red';
+      document.getElementById('statusLabel').innerHTML = "Некорректный ввод!";  
+     }
+    }
+    else 
+    {
+    document.getElementById('statusLabel').style.color = 'red';
+    document.getElementById('statusLabel').innerHTML = "Некорректный ввод!";
+    }
+    return false;
+}
+function sumResult(elem) {
+    let sum = 0;
+    while(elem){
+    sum = sum + Number(elem.firstElementChild.nextElementSibling.innerHTML)*Number(elem.firstElementChild.nextElementSibling.nextElementSibling.innerHTML);
+    elem = elem.nextElementSibling;    
+    }
+    document.getElementById("sumPriceResult").innerHTML = "Общая стоимость : " + sum;
+    return false;
+}
+
+window.onload = function() {
+    let rows = document.getElementById("tbodylist");
+    rows = rows.firstElementChild;
+    while(rows) {
+        let createClickHandler = function(row) {
+                return function() {
+                    addElement(row.firstElementChild,row.firstElementChild.nextElementSibling);
+                }
+            }
+        rows.onclick = createClickHandler(rows);
+        rows = rows.nextElementSibling;
+    }
+}
+    </script>
+    <h1 class="centertext">Корзина</h1>
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-5">
+            <div class="form-group row centertext">
+                <label class="col-sm-10 col-form-label"><strong>Список товаров в корзине</strong></label>
+            </div>
+            <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Наименование товара</th>
+                    <th>Количество</th>
+                    <th>Стоимость</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+            </table>
+            <form>
+                <div class="form-group row">
+                    <div class="col-sm-4"></div>
+                    <label id="sumPriceResult" class="col-sm-5 col-form-label">Общая стоимость : </label>
+                    <div class="col-sm-3 right">
+                        <button onclick="sumResult(document.getElementById('tableBody').firstElementChild); 
+                        return false;" type="submit" class="btn btn-primary">Рассчитать</button>
+                    </div>
+                </div>  
+            </form>
+        </div>
+        <div class="col-5">
+            <div class="form-group row centertext">
+                <label class="col-sm-10 col-form-label"><strong>Добавление товаров в корзину</strong></label>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Наименование товара</th>
+                        <th>Стоимость товара</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodylist">
+                    <tr>
+                        <th>Яблоко</th>
+                        <th>30</th>
+                    </tr>
+                    <tr>
+                        <th>Манго</th>
+                        <th>90</th>
+                    </tr>
+                    <tr>
+                        <th>Киви</th>
+                        <th>80</th>
+                    </tr>
+                </tbody>
+         </table>
+         <form>
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Наименование товара : </label>
+                <div class="col-sm-6 ">
+                    <input id="input1" type="text" class="text" placeholder="Наименование товара">
+                </div> 
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Cтоимость товара : </label>
+                <div class="col-sm-6 ">
+                    <input id="input2" type="text" class="text" placeholder="Стоимость товара">
+                </div> 
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-10 centertext">
+                    <button onclick="addElement(document.getElementById('input1'),document.getElementById('input2')); 
+                    return false;" type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+            </div>
+            <div class="form-group row centertext">
+                <label id="statusLabel" class="col-sm-10 col-form-label"></label>
+            </div>
+        </form>
+        </div>
+        <div class="col-1"></div>
+    </div>
+</body>
+</html>
